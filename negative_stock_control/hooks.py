@@ -137,13 +137,22 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+fixtures = [
+    {
+        "doctype": "DocType",
+        "filters": [["name", "in", ["Restricted Negative Stock Warehouse"]]]
+    },
+    {
+        "doctype": "Custom Field",
+        "filters": [["dt", "=", "Stock Settings"]]
+    }
+]
+
+doc_events = {
+    "Stock Entry": {
+        "validate": "negative_stock_control.overrides.stock_entry_validate"
+    }
+}
 
 # Scheduled Tasks
 # ---------------
