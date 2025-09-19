@@ -137,17 +137,6 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-fixtures = [
-    {
-        "doctype": "DocType",
-        "filters": [["name", "in", ["Restricted Negative Stock Warehouse"]]]
-    },
-    {
-        "doctype": "Custom Field",
-        "filters": [["dt", "=", "Stock Settings"]]
-    }
-]
-
 doc_events = {
     "Stock Entry": {
         "validate": "negative_stock_control.overrides.stock_entry_validate"
@@ -184,7 +173,7 @@ doc_events = {
 # ------------------------------
 #
 # override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "negative_stock_control.event.get_events"
+# 	"erpnext.stock.utils.validate_negative_stock":"negative_stock_control.allow_negative_stock_validation.validate_negative_stock"
 # }
 #
 # each overriding function accepts a `data` argument;
