@@ -140,6 +140,9 @@ app_license = "mit"
 doc_events = {
     "Stock Entry": {
         "validate": "negative_stock_control.overrides.stock_entry_validate"
+    },
+    "*": {
+        "after_migrate": "negative_stock_control.patches.apply_patch"
     }
 }
 
