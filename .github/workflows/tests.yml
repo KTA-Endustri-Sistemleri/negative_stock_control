@@ -49,7 +49,7 @@ jobs:
           bench init --frappe-branch version-15 frappe-bench
           cd frappe-bench
           bench get-app --branch version-15 erpnext
-          bench get-app ../
+          bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git
           bench new-site --mariadb-root-password root --admin-password admin karamalli.localhost
           bench --site karamalli.localhost install-app erpnext
           bench --site karamalli.localhost install-app negative_stock_control
