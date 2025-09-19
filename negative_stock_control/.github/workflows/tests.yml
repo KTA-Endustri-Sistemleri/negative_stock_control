@@ -1,0 +1,60 @@
+name: ERPNext App Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm redis-server
+          pip install frappe-bench
+          bench init --frappe-branch version-15 frappe-bench
+          cd frappe-bench
+          bench get-app --branch version-15 erpnext
+          bench get-app ../
+          bench new-site --mariadb-root-password root --admin-password admin karamalli.localhost
+          bench --site karamalli.localhost install-app erpnext
+          bench --site karamalli.localhost install-app negative_stock_control
+
+      - name: Run tests
+        run: |
+          cd frappe-bench
+          bench --site karamalli.localhost run-tests --app negative_stock_control
