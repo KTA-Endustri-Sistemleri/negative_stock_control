@@ -1,33 +1,28 @@
-### negative_stock_control
+# Negative Stock Control
 
-Per-warehouse negative stock control for ERPNext
+This app adds **per-warehouse negative stock restrictions** on top of
+ERPNext's global "Allow Negative Stock" setting.
 
-### Installation
+-   If **Allow Negative Stock** = Off → no negative stock anywhere.\
+-   If **Allow Negative Stock** = On → negative stock is allowed
+    globally, **except** in warehouses listed in the new child table in
+    **Stock Settings**.
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+## Installation
 
-```bash
+``` bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch develop
-bench install-app negative_stock_control
+bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git
+bench --site sitename install-app negative_stock_control --skip-assets
+bench --site sitename migrate
+bench build
+bench restart
 ```
 
-### Contributing
+## Usage
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
-
-```bash
-cd apps/negative_stock_control
-pre-commit install
-```
-
-Pre-commit is configured to use the following tools for checking and formatting your code:
-
-- ruff
-- eslint
-- prettier
-- pyupgrade
-
-### License
-
-mit
+1.  Go to **Stock Settings**.\
+2.  Enable **Allow Negative Stock**.\
+3.  You will see a new child table: **Restricted Negative Stock
+    Warehouses**.\
+4.  Add warehouses here to disallow negative stock in those locations.
