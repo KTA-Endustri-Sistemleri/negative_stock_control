@@ -23,10 +23,35 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      redis:
+      redis-cache:
         image: redis:6
         ports:
           - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis-queue:
+        image: redis:6
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis-socketio:
+        image: redis:6
+        ports:
+          - 6381:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -39,28 +64,19 @@ jobs:
         run: pip install frappe-bench
 
       - name: Init Bench
-        run: bench init --frappe-branch v15.79.0 frappe-bench --skip-redis-config-generation
+        run: bench init --frappe-branch v15.79.0 frappe-bench
 
       - name: Get ERPNext & App
         run: |
           cd frappe-bench
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
-          # Alt satıra yazdır
           printf "\nnegative_stock_control\n" >> sites/apps.txt
-          echo "--- sites/apps.txt content ---"
-          cat -n sites/apps.txt
 
       - name: New Site
         run: |
           cd frappe-bench
           bench new-site karamalli.localhost --mariadb-root-password root --admin-password admin --no-mariadb-socket
-
-      - name: Debug apps.txt before install
-        run: |
-          cd frappe-bench
-          echo "--- sites/apps.txt BEFORE install ---"
-          cat sites/apps.txt
 
       - name: Install ERPNext
         run: |
@@ -70,28 +86,10 @@ jobs:
       - name: Install Negative Stock Control
         run: |
           cd frappe-bench
-          bench --site karamalli.localhost install-app negative_stock_control || \
-          (cd apps/negative_stock_control && bench --site ../../../sites/karamalli.localhost install-app negative_stock_control)
-          # migrate sırasında redis index patlamasın diye skip ekledik
-          bench --site karamalli.localhost migrate --skip-search-index
+          bench --site karamalli.localhost install-app negative_stock_control
+          bench --site karamalli.localhost migrate
 
       - name: Run Tests
         run: |
           cd frappe-bench
           bench --site karamalli.localhost run-tests --app negative_stock_control --verbose
-
-      - name: Collect Logs if Failed
-        if: failure()
-        run: |
-          cd frappe-bench
-          mkdir -p artifacts
-          cp -r logs artifacts/
-          mysqldump -h 127.0.0.1 -P 3306 -u root -proot karamalli.localhost > artifacts/db_dump.sql
-          cp sites/karamalli.localhost/site_config.json artifacts/
-
-      - name: Upload Debug Artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: erpnext-debug-artifacts
-          path: frappe-bench/artifacts

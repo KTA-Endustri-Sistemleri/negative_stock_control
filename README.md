@@ -33,7 +33,7 @@ bench --site sitename migrate
    - Other warehouses → negative stock is allowed.  
 
 ---
-
+[![ERPNext App Tests](https://github.com/KTA-Endustri-Sistemleri/negative_stock_control/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/KTA-Endustri-Sistemleri/negative_stock_control/actions/workflows/tests.yml)
 ## 🧪 Tests
 
 Two scenarios are validated:  

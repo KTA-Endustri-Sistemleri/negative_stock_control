@@ -33,8 +33,8 @@ bench --site sitename migrate
    - Diğer depolarda negatif stok → **izin verilir**.  
 
 ---
-
-## 🧪 Testler
+[![ERPNext App Tests](https://github.com/KTA-Endustri-Sistemleri/negative_stock_control/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/KTA-Endustri-Sistemleri/negative_stock_control/actions/workflows/tests.yml)
+## 🧪 Testler 
 
 İki senaryo test edilir:  
 1. Negatif stok **restricted depoda** → hata vermeli ✅  
