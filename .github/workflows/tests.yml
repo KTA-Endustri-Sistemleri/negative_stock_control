@@ -39,7 +39,7 @@ jobs:
         run: pip install frappe-bench
 
       - name: Init Bench
-        run: bench init --frappe-branch v15.79.0 frappe-bench --skip-redis-config-generation
+        run: bench init --frappe-branch v15.79.0 frappe-bench
 
       - name: Get ERPNext & App
         run: |
