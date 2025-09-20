@@ -38,6 +38,12 @@ jobs:
       - name: Install Bench
         run: pip install frappe-bench
 
+      - name: Install Redis Binary
+        run: |
+           sudo apt-get update
+           sudo apt-get install -y redis-server
+           redis-server --version
+
       - name: Init Bench
         run: bench init --frappe-branch v15.79.0 frappe-bench
 
