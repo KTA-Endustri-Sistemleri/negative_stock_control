@@ -46,10 +46,10 @@ jobs:
           cd frappe-bench
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
-          # apps.txt içine app'i ekle
-          echo "negative_stock_control" >> apps/apps.txt
-          echo "--- apps.txt content ---"
-          cat apps/apps.txt
+          # Doğru dosyaya yaz: sites/apps.txt
+          echo "negative_stock_control" >> sites/apps.txt
+          echo "--- sites/apps.txt content ---"
+          cat sites/apps.txt
 
       - name: New Site
         run: |
@@ -59,8 +59,8 @@ jobs:
       - name: Debug apps.txt before install
         run: |
           cd frappe-bench
-          echo "--- apps.txt BEFORE install ---"
-          cat apps/apps.txt
+          echo "--- sites/apps.txt BEFORE install ---"
+          cat sites/apps.txt
 
       - name: Install ERPNext
         run: |
@@ -70,7 +70,12 @@ jobs:
       - name: Install Negative Stock Control
         run: |
           cd frappe-bench
-          bench --site karamalli.localhost install-app negative_stock_control
+          bench --site karamalli.localhost install-app negative_stock_control || \
+          bench --site karamalli.localhost install-app apps/negative_stock_control
+
+      - name: Run Migrate
+        run: |
+          cd frappe-bench
           bench --site karamalli.localhost migrate
 
       - name: Run Tests
