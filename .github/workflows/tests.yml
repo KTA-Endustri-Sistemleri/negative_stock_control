@@ -112,7 +112,7 @@ jobs:
       - name: Run Tests
         run: |
           cd frappe-bench
-          bench --site karamalli.localhost run-tests --app negative_stock_control --verbose
+          bench --site karamalli.localhost run-tests --app negative_stock_control
 
       - name: Collect Logs if Failed
         if: failure()
