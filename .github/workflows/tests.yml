@@ -46,10 +46,12 @@ jobs:
           cd frappe-bench
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
-          # Doğru dosyaya yaz: sites/apps.txt
-          echo "negative_stock_control" >> sites/apps.txt
+          # Alt satıra yazdır
+          printf "\nnegative_stock_control\n" >> sites/apps.txt
           echo "--- sites/apps.txt content ---"
-          cat sites/apps.txt
+          cat -n sites/apps.txt
+
+
 
       - name: New Site
         run: |
