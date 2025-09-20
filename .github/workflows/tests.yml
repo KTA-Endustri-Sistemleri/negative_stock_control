@@ -23,10 +23,20 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      redis:
+      redis_cache:
         image: redis:6
         ports:
-          - 6379:6379
+          - 13000:6379
+
+      redis_queue:
+        image: redis:6
+        ports:
+          - 11000:6379
+
+      redis_socketio:
+        image: redis:6
+        ports:
+          - 12000:6379
 
     steps:
       - uses: actions/checkout@v3
@@ -63,11 +73,20 @@ jobs:
           echo "--- sites/apps.txt content ---"
           cat -n apps.txt
 
-
       - name: New Site
         run: |
           cd frappe-bench
           bench new-site karamalli.localhost --mariadb-root-password root --admin-password admin --no-mariadb-socket
+
+      - name: Configure Redis Connections
+        run: |
+          cd frappe-bench/sites
+          jq '. + {
+            "redis_cache": "redis://127.0.0.1:13000",
+            "redis_queue": "redis://127.0.0.1:11000",
+            "redis_socketio": "redis://127.0.0.1:12000"
+          }' common_site_config.json > tmp.json && mv tmp.json common_site_config.json
+          cat common_site_config.json
 
       - name: Debug apps.txt before install
         run: |
@@ -84,8 +103,6 @@ jobs:
         run: |
           cd frappe-bench
           bench --site karamalli.localhost install-app negative_stock_control
-          # migrate sırasında search index patlamasın diye skip ekledik
-          bench --site karamalli.localhost migrate --skip-search-index
 
       - name: Run Migrate
         run: |
