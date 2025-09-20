@@ -18,43 +18,52 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
       redis:
         image: redis:6
         ports:
           - 6379:6379
-        options: >-
-          --health-cmd="redis-cli ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Bench
+        run: pip install frappe-bench
+
+      - name: Init Bench
+        run: bench init --frappe-branch version-15 frappe-bench --skip-redis-config-generation
+
+      - name: Get ERPNext & App
         run: |
-          sudo apt-get update
-          sudo apt-get install -y nodejs npm redis-server
-          pip install frappe-bench
-          bench init --frappe-branch version-15 frappe-bench --skip-redis-config-generation
           cd frappe-bench
           bench get-app --branch version-15 erpnext
-          bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git
-          bench new-site --mariadb-root-password root --admin-password admin karamalli.localhost
-          bench --site karamalli.localhost install-app erpnext
-          bench --site karamalli.localhost install-app negative_stock_control
+          bench get-app .  # current repo (negative_stock_control)
 
-      - name: Run tests
+      - name: New Site
+        run: |
+          cd frappe-bench
+          bench new-site --mariadb-root-password root --admin-password admin karamalli.localhost
+
+      - name: Install ERPNext
+        run: |
+          cd frappe-bench
+          bench --site karamalli.localhost install-app erpnext
+
+      - name: Install Negative Stock Control
+        run: |
+          cd frappe-bench
+          bench --site karamalli.localhost install-app negative_stock_control
+          # after_migrate patch cleans duplicate fields automatically
+
+      - name: Run Tests
         run: |
           cd frappe-bench
           bench --site karamalli.localhost run-tests --app negative_stock_control

@@ -146,6 +146,10 @@ doc_events = {
     }
 }
 
+after_migrate = [
+    "negative_stock_control.patches.remove_duplicate_quality_inspection.execute"
+]
+
 # Scheduled Tasks
 # ---------------
 
