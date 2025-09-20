@@ -1,2 +1,4 @@
 negative_stock_control.patches.remove_duplicate_quality_inspection
+negative_stock_control.patches.create_restricted_negative_stock_warehouse
 negative_stock_control.patches.add_restricted_negative_stock_field
+
