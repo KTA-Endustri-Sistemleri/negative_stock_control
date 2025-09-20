@@ -47,6 +47,8 @@ jobs:
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
           echo "negative_stock_control" >> apps/apps.txt
+          echo "--- apps.txt ---"
+          cat apps/apps.txt
 
       - name: New Site
         run: |
