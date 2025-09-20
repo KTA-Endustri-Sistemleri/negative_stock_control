@@ -51,8 +51,6 @@ jobs:
           echo "--- sites/apps.txt content ---"
           cat -n sites/apps.txt
 
-
-
       - name: New Site
         run: |
           cd frappe-bench
@@ -76,12 +74,6 @@ jobs:
           (cd apps/negative_stock_control && bench --site ../../../sites/karamalli.localhost install-app negative_stock_control)
           # migrate sırasında redis index patlamasın diye skip ekledik
           bench --site karamalli.localhost migrate --skip-search-index
-
-
-      - name: Run Migrate
-        run: |
-          cd frappe-bench
-          bench --site karamalli.localhost migrate
 
       - name: Run Tests
         run: |
