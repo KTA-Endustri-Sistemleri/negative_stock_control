@@ -46,14 +46,21 @@ jobs:
           cd frappe-bench
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
+          # apps.txt içine app'i ekle
           echo "negative_stock_control" >> apps/apps.txt
-          echo "--- apps.txt ---"
+          echo "--- apps.txt content ---"
           cat apps/apps.txt
 
       - name: New Site
         run: |
           cd frappe-bench
           bench new-site karamalli.localhost --mariadb-root-password root --admin-password admin --no-mariadb-socket
+
+      - name: Debug apps.txt before install
+        run: |
+          cd frappe-bench
+          echo "--- apps.txt BEFORE install ---"
+          cat apps/apps.txt
 
       - name: Install ERPNext
         run: |
