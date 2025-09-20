@@ -23,7 +23,9 @@ before_app_install = [
 ]
 
 before_migrate = [
+    "negative_stock_control/negative_stock_control/patches/create_restricted_negative_stock_warehouse.py",
     "negative_stock_control.patches.remove_duplicate_quality_inspection.execute"
+
 ]
 
 after_migrate = [
