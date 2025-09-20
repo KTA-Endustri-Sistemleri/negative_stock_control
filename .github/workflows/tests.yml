@@ -50,16 +50,21 @@ jobs:
       - name: Fix apps.txt
         run: |
           cd frappe-bench/sites
-          # erpnextnegative_stock_control birleşmesin diye garanti altına alıyoruz
-          sed -i 's/erpnextnegative_stock_control/erpnext\nnegative_stock_control/' apps.txt
-          echo "--- apps.txt after fix ---"
-          cat -n apps.txt
+          # Alt satıra yazdır
+          printf "\nnegative_stock_control\n" >> sites/apps.txt
+          echo "--- sites/apps.txt content ---"
 
       - name: New Site
         run: |
           cd frappe-bench
           bench new-site karamalli.localhost --mariadb-root-password root --admin-password admin --no-mariadb-socket
 
+      - name: Debug apps.txt before install
+        run: |
+          cd frappe-bench
+          echo "--- apps.txt BEFORE install ---"
+          cat -n sites/apps.txt
+    
       - name: Install ERPNext
         run: |
           cd frappe-bench
