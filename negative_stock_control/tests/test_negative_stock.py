@@ -16,7 +16,7 @@ def get_or_create_item(item_code="TEST-ITEM"):
             "stock_uom": "Nos",
             "item_group": item_group
         })
-        item.insert()
+        item.insert(ignore_permissions=True)
     return frappe.get_doc("Item", item_code)
 
 
@@ -28,7 +28,7 @@ def get_or_create_warehouse(base_name="WH-TEST"):
         "warehouse_name": wh_name,
         "company": company
     })
-    wh.insert()
+    wh.insert(ignore_permissions=True)
     return wh
 
 
@@ -45,20 +45,37 @@ def restrict_warehouse(warehouse):
         "parentfield": "restricted_negative_stock_warehouses",
         "parenttype": "Stock Settings"
     })
-    restricted.insert()
+    restricted.insert(ignore_permissions=True)
     ss.reload()
     print(f"[restrict_warehouse] {warehouse.name} eklendi")
 
 
 class TestNegativeStock(unittest.TestCase):
     def setUp(self):
+        # Varsayılan Item Group ekle
+        if not frappe.db.exists("Item Group", "All Item Groups"):
+            frappe.get_doc({
+                "doctype": "Item Group",
+                "item_group_name": "All Item Groups",
+                "is_group": 1,
+                "parent_item_group": ""
+            }).insert(ignore_permissions=True)
+
+        # Varsayılan UOM ekle
+        if not frappe.db.exists("UOM", "Nos"):
+            frappe.get_doc({
+                "doctype": "UOM",
+                "uom_name": "Nos"
+            }).insert(ignore_permissions=True)
+
+        # Restricted tabloyu temizle
         frappe.db.sql("DELETE FROM `tabRestricted Negative Stock Warehouse`")
         frappe.db.commit()
 
         frappe.db.set_value("Stock Settings", None, "allow_negative_stock", 1)
         frappe.db.commit()
         frappe.clear_cache(doctype="Stock Settings")
-        print("[setUp] Restricted tablo temizlendi, allow_negative_stock=1 yapıldı")
+        print("[setUp] Varsayılan Item Group & UOM garanti altına alındı, tablo temizlendi, allow_negative_stock=1 yapıldı")
 
     def test_negative_stock_restricted_warehouse(self):
         """Restricted depoda negatif stok yasak olmalı"""
@@ -75,7 +92,7 @@ class TestNegativeStock(unittest.TestCase):
                 "qty": 5,
                 "uom": "Nos",
                 "conversion_factor": 1,
-                "allow_zero_valuation_rate": 1   # 🔑 Valuation rate hatasına takılmasın
+                "allow_zero_valuation_rate": 1
             }]
         })
         print(f"[restricted_test] Deneme: item={item.item_code}, wh={wh.name}, qty=5")
@@ -97,7 +114,7 @@ class TestNegativeStock(unittest.TestCase):
                 "qty": 5,
                 "uom": "Nos",
                 "conversion_factor": 1,
-                "allow_zero_valuation_rate": 1   # 🔑 buraya da ekledik
+                "allow_zero_valuation_rate": 1
             }]
         })
         print(f"[allowed_test] Deneme: item={item.item_code}, wh={wh.name}, qty=5")
