@@ -175,9 +175,9 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"erpnext.stock.utils.validate_negative_stock":"negative_stock_control.allow_negative_stock_validation.validate_negative_stock"
-# }
+override_whitelisted_methods = {
+ 	"erpnext.stock.utils.validate_negative_stock":"negative_stock_control.allow_negative_stock_validation.validate_negative_stock"
+ }
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
