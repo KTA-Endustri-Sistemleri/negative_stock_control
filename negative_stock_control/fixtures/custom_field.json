@@ -4,8 +4,10 @@
     "dt": "Stock Settings",
     "fieldname": "restricted_negative_stock_warehouses",
     "fieldtype": "Table",
-    "insert_after": "allow_negative_stock",
     "label": "Negatif stoğa izin verilmeyecek depolar",
-    "options": "Restricted Negative Stock Warehouse"
+    "options": "Restricted Negative Stock Warehouse",
+    "insert_after": "allow_negative_stock",
+    "name": "Stock Settings-restricted_negative_stock_warehouses",
+    "module": "negative_stock_control"
   }
 ]
