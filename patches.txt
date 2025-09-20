@@ -1,0 +1,1 @@
+negative_stock_control.patches.remove_duplicate_quality_inspection.execute

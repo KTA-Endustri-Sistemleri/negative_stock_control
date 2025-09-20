@@ -18,7 +18,7 @@ before_app_install = "negative_stock_control.patches.remove_duplicate_quality_in
 # Run patch again after migrations (safety net)
 after_migrate = [
     "negative_stock_control.patches.remove_duplicate_quality_inspection.execute",
-    "negative_stock_control.patches.apply_patch",
+    "negative_stock_control.patches.patches.apply_patch",
 ]
 
 # Overrides

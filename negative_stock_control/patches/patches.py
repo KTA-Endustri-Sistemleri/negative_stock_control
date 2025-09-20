@@ -7,5 +7,4 @@ def apply_patch(*args, **kwargs):
         erpnext.stock.utils.validate_negative_stock = validate_negative_stock
         frappe.logger("negative_stock").info("✅ Monkey patch applied: validate_negative_stock overridden")
     except ImportError:
-        # ERPNext henüz yüklenmemiş olabilir (örneğin CI sırasında pip install aşaması)
         frappe.logger("negative_stock").warning("⚠️ ERPNext not available yet, patch skipped")
