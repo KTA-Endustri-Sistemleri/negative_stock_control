@@ -4,6 +4,20 @@ import random
 from frappe.exceptions import ValidationError
 
 
+def get_or_create_company():
+    """Varsayılan Test Company yoksa oluşturur"""
+    if not frappe.db.exists("Company", "Test Company"):
+        company = frappe.get_doc({
+            "doctype": "Company",
+            "company_name": "Test Company",
+            "abbr": "TC",
+            "default_currency": "USD"
+        })
+        company.insert(ignore_permissions=True)
+        frappe.db.commit()
+    return "Test Company"
+
+
 def get_or_create_item(item_code="TEST-ITEM"):
     item_group = frappe.db.exists("Item Group", "Products") or "All Item Groups"
     if not frappe.db.exists("Item", item_code):
@@ -21,7 +35,7 @@ def get_or_create_item(item_code="TEST-ITEM"):
 
 
 def get_or_create_warehouse(base_name="WH-TEST"):
-    company = frappe.defaults.get_user_default("Company") or frappe.db.get_value("Company", {}, "name")
+    company = get_or_create_company()  # 🔑 garanti company
     wh_name = f"{base_name}-{random.randint(1000,9999)}"
     wh = frappe.get_doc({
         "doctype": "Warehouse",
