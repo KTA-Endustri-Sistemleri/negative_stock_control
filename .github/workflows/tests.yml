@@ -35,20 +35,25 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Bench & Redis Server
-        run: |
-          pip install frappe-bench
-          sudo apt-get update
-          sudo apt-get install -y redis-server
+      - name: Install Bench
+        run: pip install frappe-bench
 
       - name: Init Bench
-        run: bench init --frappe-branch v15.79.0 frappe-bench
+        run: bench init --frappe-branch v15.79.0 frappe-bench --skip-redis-config-generation
 
       - name: Get ERPNext & App
         run: |
           cd frappe-bench
           bench get-app --branch v15.79.0 erpnext --skip-assets
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
+
+      - name: Fix apps.txt
+        run: |
+          cd frappe-bench/sites
+          # erpnextnegative_stock_control birleşmesin diye garanti altına alıyoruz
+          sed -i 's/erpnextnegative_stock_control/erpnext\nnegative_stock_control/' apps.txt
+          echo "--- apps.txt after fix ---"
+          cat -n apps.txt
 
       - name: New Site
         run: |
@@ -64,7 +69,7 @@ jobs:
         run: |
           cd frappe-bench
           bench --site karamalli.localhost install-app negative_stock_control
-          # migrate sırasında redis index patlamasın diye skip ekledik
+          # migrate sırasında search index patlamasın diye skip ekledik
           bench --site karamalli.localhost migrate --skip-search-index
 
       - name: Run Migrate
