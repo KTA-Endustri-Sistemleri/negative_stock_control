@@ -50,9 +50,13 @@ jobs:
       - name: Fix apps.txt
         run: |
           cd frappe-bench/sites
-          # Alt satıra yazdır
-          printf "\nnegative_stock_control\n" >> sites/apps.txt
+          # Olası birleşmeyi düzelt
+          sed -i 's/erpnextnegative_stock_control/erpnext\nnegative_stock_control/' apps.txt
+          # Eğer yoksa ekle
+          grep -qxF negative_stock_control apps.txt || echo "negative_stock_control" >> apps.txt
           echo "--- sites/apps.txt content ---"
+          cat -n apps.txt
+
 
       - name: New Site
         run: |
