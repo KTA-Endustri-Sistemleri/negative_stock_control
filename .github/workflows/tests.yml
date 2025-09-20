@@ -44,8 +44,8 @@ jobs:
       - name: Get ERPNext & App
         run: |
           cd frappe-bench
-          bench get-app --branch v15.79.0 erpnext
-          bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git
+          bench get-app --branch v15.79.0 erpnext --skip-assets
+          bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git --skip-assets
 
       - name: New Site
         run: |
