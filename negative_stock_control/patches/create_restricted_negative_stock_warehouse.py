@@ -20,7 +20,7 @@ def execute():
         "name": "Restricted Negative Stock Warehouse",
         "module": "Negative Stock Control",
         "istable": 1,
-        "custom": 0,
+        "custom": 1,  # 🔑 custom=1 → developer_mode gerekmeden çalışır
         "fields": [
             {
                 "fieldname": "warehouse",
