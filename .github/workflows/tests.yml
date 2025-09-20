@@ -73,16 +73,13 @@ jobs:
         run: |
           cd frappe-bench
           mkdir -p artifacts
-          # ERPNext & Frappe loglarını topla
           cp -r logs artifacts/
-          # MariaDB dump al
           mysqldump -h 127.0.0.1 -P 3306 -u root -proot karamalli.localhost > artifacts/db_dump.sql
-          # site_config.json kaydet
           cp sites/karamalli.localhost/site_config.json artifacts/
 
       - name: Upload Debug Artifacts
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: erpnext-debug-artifacts
           path: frappe-bench/artifacts
