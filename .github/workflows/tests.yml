@@ -39,19 +39,18 @@ jobs:
         run: pip install frappe-bench
 
       - name: Init Bench
-        run: bench init --frappe-branch version-15 frappe-bench --skip-redis-config-generation
+        run: bench init --frappe-branch v15.79.0 frappe-bench --skip-redis-config-generation
 
       - name: Get ERPNext & App
         run: |
           cd frappe-bench
-          bench get-app --branch version-15 erpnext
+          bench get-app --branch v15.79.0 erpnext
           bench get-app https://github.com/KTA-Endustri-Sistemleri/negative_stock_control.git
-
 
       - name: New Site
         run: |
           cd frappe-bench
-          bench new-site --mariadb-root-password root --admin-password admin karamalli.localhost
+          bench new-site karamalli.localhost --mariadb-root-password root --admin-password admin --no-mariadb-socket
 
       - name: Install ERPNext
         run: |
@@ -62,9 +61,28 @@ jobs:
         run: |
           cd frappe-bench
           bench --site karamalli.localhost install-app negative_stock_control
-          # after_migrate patch cleans duplicate fields automatically
+          bench --site karamalli.localhost migrate
 
       - name: Run Tests
         run: |
           cd frappe-bench
-          bench --site karamalli.localhost run-tests --app negative_stock_control
+          bench --site karamalli.localhost run-tests --app negative_stock_control --verbose
+
+      - name: Collect Logs if Failed
+        if: failure()
+        run: |
+          cd frappe-bench
+          mkdir -p artifacts
+          # ERPNext & Frappe loglarını topla
+          cp -r logs artifacts/
+          # MariaDB dump al
+          mysqldump -h 127.0.0.1 -P 3306 -u root -proot karamalli.localhost > artifacts/db_dump.sql
+          # site_config.json kaydet
+          cp sites/karamalli.localhost/site_config.json artifacts/
+
+      - name: Upload Debug Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: erpnext-debug-artifacts
+          path: frappe-bench/artifacts
