@@ -12,6 +12,10 @@ doc_events = {
     }
 }
 
+before_migrate = [
+    "negative_stock_control.patches.remove_duplicate_quality_inspection.execute"
+]
+
 # Run patch before fixtures are imported
 before_app_install = "negative_stock_control.patches.remove_duplicate_quality_inspection.execute"
 

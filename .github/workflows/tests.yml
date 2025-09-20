@@ -73,7 +73,7 @@ jobs:
         run: |
           cd frappe-bench
           bench --site karamalli.localhost install-app negative_stock_control || \
-          bench --site karamalli.localhost install-app apps/negative_stock_control
+          (cd apps/negative_stock_control && bench --site ../../../sites/karamalli.localhost install-app negative_stock_control)
 
       - name: Run Migrate
         run: |
